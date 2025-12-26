@@ -1,0 +1,129 @@
+body {
+  width: 320px;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #f8f9fa;
+}
+
+#scamguard-popup {
+  padding: 16px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 18px;
+  color: #212529;
+}
+
+.status-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #6c757d;
+}
+
+.status-dot.safe { background: #28a745; }
+.status-dot.warning { background: #ffc107; }
+.status-dot.danger { background: #dc3545; }
+
+.content {
+  min-height: 120px;
+}
+
+.risk-card {
+  background: white;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  margin-bottom: 12px;
+}
+
+.risk-level {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.risk-low { background: #d4edda; color: #155724; }
+.risk-medium { background: #fff3cd; color: #856404; }
+.risk-high { background: #f8d7da; color: #721c24; }
+
+.risk-title {
+  font-size: 16px;
+  margin: 0 0 8px 0;
+  font-weight: 600;
+}
+
+.risk-reasons {
+  margin: 0;
+  padding-left: 20px;
+  font-size: 13px;
+  color: #495057;
+}
+
+.risk-reasons li {
+  margin-bottom: 4px;
+}
+
+.decision-section {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #e9ecef;
+}
+
+.decision-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #212529;
+}
+
+.decision-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.btn {
+  flex: 1;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: center;
+}
+
+.btn-primary {
+  background: #007bff;
+  color: white;
+}
+
+.btn-secondary {
+  background: #6c757d;
+  color: white;
+}
+
+.footer {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid #e9ecef;
+  text-align: center;
+}
+
+.footer small {
+  font-size: 11px;
+  color: #6c757d;
+}
