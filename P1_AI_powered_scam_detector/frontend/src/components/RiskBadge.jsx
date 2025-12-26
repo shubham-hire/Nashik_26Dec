@@ -18,8 +18,8 @@ const RiskBadge = ({ level }) => {
             break;
         case 'high-risk':
             className += 'badge-danger';
-            text = 'High Risk Scam';
-            icon = '🔴';
+            text = 'High Risk'; // Removed "Scam" to be more professional
+            icon = '🛡️'; // Shield icon is more professional than red circle
             break;
         default:
             className += 'badge-safe';
