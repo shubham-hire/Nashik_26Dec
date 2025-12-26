@@ -35,15 +35,12 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ai = void 0;
 const genkit_1 = require("genkit");
-const vertexai_1 = require("@genkit-ai/vertexai");
+const googleai_1 = require("@genkit-ai/googleai");
 const dotenv = __importStar(require("dotenv"));
 dotenv.config();
-// Configure and export the Genkit instance
+// Configure Genkit with Google AI plugin (uses GOOGLE_GENAI_API_KEY from .env)
 exports.ai = (0, genkit_1.genkit)({
     plugins: [
-        (0, vertexai_1.vertexAI)({
-            projectId: process.env.GOOGLE_CLOUD_PROJECT || 'scamguard-pro',
-            location: 'us-central1',
-        }),
+        (0, googleai_1.googleAI)(),
     ],
 });

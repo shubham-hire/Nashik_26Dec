@@ -1,15 +1,12 @@
 import { genkit } from 'genkit';
-import { vertexAI } from '@genkit-ai/vertexai';
+import { googleAI } from '@genkit-ai/googleai';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
 
-// Configure and export the Genkit instance
+// Configure Genkit with Google AI plugin (uses GOOGLE_GENAI_API_KEY from .env)
 export const ai = genkit({
     plugins: [
-        vertexAI({
-            projectId: process.env.GOOGLE_CLOUD_PROJECT || 'scamguard-pro',
-            location: 'us-central1',
-        }),
+        googleAI(),
     ],
 });

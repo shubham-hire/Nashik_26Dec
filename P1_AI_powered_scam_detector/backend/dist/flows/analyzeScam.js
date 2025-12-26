@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.analyzeScamFlow = void 0;
 exports.runAnalysis = runAnalysis;
 const genkit_1 = require("../genkit");
-const vertexai_1 = require("@genkit-ai/vertexai");
+const googleai_1 = require("@genkit-ai/googleai");
 const schemas_1 = require("../schemas");
 const SYSTEM_PROMPT = `You are an expert AI security analyst specializing in detecting financial scams, phishing attempts, and fraudulent messages. Your role is to protect users from malicious content.
 
@@ -35,10 +35,9 @@ exports.analyzeScamFlow = genkit_1.ai.defineFlow({
     const userMessage = input.fileUrl
         ? `${input.text}\n\n[Attached file: ${input.fileUrl}]`
         : input.text;
-    // Combine system prompt with user message
     const fullPrompt = `${SYSTEM_PROMPT}\n\n---\n\nMessage to analyze:\n${userMessage}`;
     const { output } = yield genkit_1.ai.generate({
-        model: vertexai_1.gemini15Pro,
+        model: googleai_1.gemini15Flash,
         prompt: fullPrompt,
         output: {
             format: 'json',
@@ -50,7 +49,6 @@ exports.analyzeScamFlow = genkit_1.ai.defineFlow({
     });
     return output;
 }));
-// Export a helper function to run the flow
 function runAnalysis(input) {
     return __awaiter(this, void 0, void 0, function* () {
         return yield (0, exports.analyzeScamFlow)(input);
