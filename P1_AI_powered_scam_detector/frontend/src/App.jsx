@@ -1,64 +1,110 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import MessageInput from './components/MessageInput';
-import AnalysisResult from './components/AnalysisResult';
+import ChatStream from './components/ChatStream';
+import Sidebar from './components/Sidebar';
+import LiveAlerts from './components/LiveAlerts';
+import SafetyTips from './components/SafetyTips';
+import HistoryPanel from './components/HistoryPanel';
 import { analyzeMessage } from './utils/mockAi';
 
 function App() {
-  const [screen, setScreen] = useState('input'); // input, analyzing, result
-  const [result, setResult] = useState(null);
+  const [activeTab, setActiveTab] = useState('scan'); // scan, history, tips
+  const [messages, setMessages] = useState([]);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [history, setHistory] = useState([]);
 
-  const handleAnalyze = async (text, files) => {
-    setScreen('analyzing');
-    // Using mock logic
-    const data = await analyzeMessage(text, files);
-    setResult(data);
-    setScreen('result');
+  // Load history from local storage on mount
+  useEffect(() => {
+    const savedHistory = localStorage.getItem('scamGuardHistory');
+    if (savedHistory) {
+      setHistory(JSON.parse(savedHistory));
+    }
+  }, []);
+
+  const saveToHistory = (data, text) => {
+    const newEntry = {
+      timestamp: new Date().toISOString(),
+      result: data,
+      text: text || "File Attachment"
+    };
+    const updatedHistory = [newEntry, ...history];
+    setHistory(updatedHistory);
+    localStorage.setItem('scamGuardHistory', JSON.stringify(updatedHistory));
   };
 
-  const handleReset = () => {
-    setResult(null);
-    setScreen('input');
+  const handleAnalyze = async (text, files) => {
+    setIsAnalyzing(true);
+
+    // Add User Message
+    const userMsgId = Date.now();
+    const newMessage = {
+      id: userMsgId,
+      role: 'user',
+      content: text,
+      files: files
+    };
+
+    // Add Placeholder AI Message
+    const aiMsgId = userMsgId + 1;
+    const loadingMessage = {
+      id: aiMsgId,
+      role: 'ai',
+      isLoading: true
+    };
+
+    setMessages(prev => [...prev, newMessage, loadingMessage]);
+
+    // Process
+    const data = await analyzeMessage(text, files);
+
+    // Update AI Message
+    setMessages(prev => prev.map(msg =>
+      msg.id === aiMsgId
+        ? { ...msg, isLoading: false, result: data }
+        : msg
+    ));
+
+    saveToHistory(data, text);
+    setIsAnalyzing(false);
+  };
+
+  const renderContent = () => {
+    if (activeTab === 'history') {
+      return (
+        <div style={{ padding: '2rem', maxWidth: '1000px', margin: '0 auto' }}>
+          <HistoryPanel history={history} />
+        </div>
+      );
+    }
+
+    if (activeTab === 'tips') {
+      return (
+        <div style={{ padding: '2rem', maxWidth: '1000px', margin: '0 auto', animation: 'fadeInUp 0.4s ease-out' }}>
+          <h2 style={{ marginBottom: '2rem' }}>Security Knowledge Base</h2>
+          <SafetyTips />
+        </div>
+      );
+    }
+
+    // Default: Chat Interface
+    return (
+      <div className="chat-layout-main">
+        <ChatStream messages={messages} />
+        <MessageInput onAnalyze={handleAnalyze} isAnalyzing={isAnalyzing} />
+      </div>
+    );
   };
 
   return (
     <div className="app-container">
-      <header style={{
-        textAlign: 'center',
-        marginBottom: '2.5rem',
-        opacity: screen === 'analyzing' ? 0.3 : 1,
-        transition: 'opacity 0.5s ease-in-out'
-      }}>
-        {/* Logo/Icon placeholder if needed, for now typography */}
-        <h1 style={{
-          margin: 0,
-          fontSize: '2rem',
-          fontWeight: 700,
-          background: 'linear-gradient(to bottom right, #f8fafc, #94a3b8)',
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent',
-          letterSpacing: '-0.03em'
-        }}>
-          ScamGuard
-        </h1>
-        <p style={{
-          marginTop: '0.5rem',
-          color: 'var(--text-secondary)',
-          fontSize: '1rem',
-          fontWeight: 400
-        }}>
-          Professional Fraud Detection System
-        </p>
-      </header>
+      <Sidebar activeTab={activeTab} onTabChange={setActiveTab} />
 
-      <main>
-        {screen === 'input' || screen === 'analyzing' ? (
-          <MessageInput onAnalyze={handleAnalyze} isAnalyzing={screen === 'analyzing'} />
-        ) : (
-          <AnalysisResult result={result} onReset={handleReset} />
-        )}
+      <main style={{ display: 'flex', flexDirection: 'column', padding: 0 }}>
+        {activeTab !== 'scan' && <LiveAlerts />} {/* Only show ticker on non-chat pages to keep chat clean? Or keep it? keeping it clean for chat is better */}
+        {renderContent()}
       </main>
 
-      {/* Background Decor - Refined for Professional look (Subtle Glows) */}
+      {/* Background Decor */}
       <div style={{
         position: 'fixed',
         top: '-20%',
@@ -66,16 +112,6 @@ function App() {
         width: '600px',
         height: '600px',
         background: 'radial-gradient(circle, rgba(59,130,246,0.06) 0%, transparent 60%)',
-        zIndex: -1,
-        pointerEvents: 'none'
-      }} />
-      <div style={{
-        position: 'fixed',
-        bottom: '-20%',
-        left: '-10%',
-        width: '500px',
-        height: '500px',
-        background: 'radial-gradient(circle, rgba(99,102,241,0.05) 0%, transparent 60%)',
         zIndex: -1,
         pointerEvents: 'none'
       }} />
